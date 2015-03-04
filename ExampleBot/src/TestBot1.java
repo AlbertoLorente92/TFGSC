@@ -12,125 +12,126 @@ import java.util.ListIterator;
 import bwapi.*;
 import bwta.*;
 
-public class TestBot1{
+public class TestBot1 {
 
-    private Mirror mirror = new Mirror();
-    
-    private Unit marine;
+	private Mirror mirror = new Mirror();
 
-    private Game game;
+	private Unit marine;
 
-    private Player self;
+	private Game game;
+	private int cont;
+	private Player self;
 
-    private boolean fin;
-    private QLearner q;
-    private World w;
-    
-    private DateFormat dateFormat;
+	private boolean fin;
+	private QLearner q;
+	private World w;
+
+	private DateFormat dateFormat;
 	private Date date;
-    
-    public void run() {
-        mirror.getModule().setEventListener(new DefaultBWListener() {
-           // @Override
-           /* public void onUnitCreate(Unit unit) {
-                System.out.println("New unit " + unit.getType());
-            }*/
 
-            @Override
-            public void onStart() {
-                dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-            	date = new Date();
-            	
-                game = mirror.getGame();
-                self = game.self();
-                //Use BWTA to analyze map
-                //This may take a few minutes if the map is processed first time!
-                System.out.println("Analyzing map...");
-                BWTA.readMap();
-                BWTA.analyze();
-                
-                getMarine();
-                
-                System.out.println("Map data ready");
-                
-                System.out.println(game.mapHeight() + " " + game.mapWidth());
-                System.out.println(marine.getPosition().getX() / 32 + " " + marine.getPosition().getY() / 32);
-                
-                
-                w = new Escenario(game,marine);
-                q = new QLearner(w);
-                game.enableFlag(1); // This command allows you to manually control the units during the game.
-                
-            }
-            
-            public void onEnd(boolean isWinner){
-            	System.out.println("END");
-            	System.out.println(marine.getPosition().getX() / 32 + " " + marine.getPosition().getY() / 32);
-            	q.endOfGame(); 
-            	Fichero.escribirTabla(q.qTable());
-            	//q.mostrarQ();
-            }
+	public void run() {
+		mirror.getModule().setEventListener(new DefaultBWListener() {
+			// @Override
+			/*
+			 * public void onUnitCreate(Unit unit) {
+			 * System.out.println("New unit " + unit.getType()); }
+			 */
 
-            private void getMarine() {
-				// TODO Auto-generated method stub
-            	for (Unit myUnit : self.getUnits()) {
-            		if(myUnit.getType() == UnitType.Terran_Marine){
-            			marine = myUnit;
-            		}            			
-            	}
+			@Override
+			public void onStart() {
+				dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+				date = new Date();
+				cont = 0;
+				game = mirror.getGame();
+				self = game.self();
+				// Use BWTA to analyze map
+				// This may take a few minutes if the map is processed first
+				// time!
+				System.out.println("Analyzing map...");
+				BWTA.readMap();
+				BWTA.analyze();
+
+				getMarine();
+
+				System.out.println("Map data ready");
+
+				System.out.println(game.mapHeight() + " " + game.mapWidth());
+				System.out.println(marine.getPosition().getX() / 32 + " "
+						+ marine.getPosition().getY() / 32);
+
+				w = new Escenario(game, marine);
+
+				// QTable qT = Fichero.leeTabla();
+				// q = new QLearner(w,qT);
+
+				q = new QLearner(w);
+
+				game.setLocalSpeed(0);
+				// game.setGUI(false);
+				game.enableFlag(0); // This command allows you to manually
+									// control the units during the game.
+
+			}
+
+			public void onEnd(boolean isWinner) {
+				System.out.println("END");
+				q.endOfGame();
+				Fichero.escribirTabla(q.qTable());
+			}
+
+			private void getMarine() {
+				for (Unit myUnit : self.getUnits()) {
+					if (myUnit.getType() == UnitType.Terran_Marine) {
+						marine = myUnit;
+					}
+				}
 			}
 
 			@Override
-            public void onFrame() {
-                game.setTextSize(10);
-                game.drawTextScreen(10, 10, "Playing as " + self.getName() + " - " + self.getRace());
-                StringBuilder units = new StringBuilder("My units:\n");
-                
-                Position p = new Position(marine.getPosition().getX()-32,marine.getPosition().getY());
-                int mov = q.move();
-                
-                if(mov == 0){
-                	System.out.println("DERECHA");
-                	marine.move(new Position(marine.getPosition().getX()+32,marine.getPosition().getY()));
-                }
-                
-                if(mov == 1){
-                	System.out.println("ABAJO");
-                	marine.move(new Position(marine.getPosition().getX(),marine.getPosition().getY()+32));
-                }
-                
-                if(mov == 2){
-                	System.out.println("IZQUIERDA");
-                	marine.move(new Position(marine.getPosition().getX()-32,marine.getPosition().getY()));
-                }
-                
-                if(mov == 3){
-                	System.out.println("ARRIBA");
-                	marine.move(new Position(marine.getPosition().getX(),marine.getPosition().getY()-32));
-                }
-                
-                if(mov!= 0 && mov!= 1 && mov!= 2 && mov!= 3)
-                	System.out.println("CAGADA");
-                /*Position p = new Position(marine.getPosition().getX()-32,marine.getPosition().getY());
-                
-                if(!p.isValid())
-					System.err.println("posicion no valida");
-                else
-                	marine.move(p);*/
-				
-                
-                
-                //draw my units on screen
-                game.drawTextScreen(10, 25, units.toString());
-            }
-        });
+			public void onFrame() {
+				game.setTextSize(10);
 
-        mirror.startGame();
-        
-    }
+				//if (w.state() != w.lastState()) {
 
-    public static void main(String... args) {
-        new TestBot1().run();
-    }
+					int mov = q.move();
+					if (mov == 0) { // DERECHA
+						Position p = new Position(marine.getPosition().getX() + 32, marine.getPosition().getY());
+						if(p.isValid()){
+							marine.move(p);
+							System.out.println("DERECHA - "+ marine.getPosition().getX() / 32 + " "+ marine.getPosition().getY() / 32);
+						}
+					} else if (mov == 1) { // ABAJO
+						Position p = new Position(marine.getPosition().getX(),marine.getPosition().getY() + 32);
+						if(p.isValid()){
+							marine.move(p);
+							System.out.println("ABAJO - "+ marine.getPosition().getX() / 32 + " "+ marine.getPosition().getY() / 32);
+						}
+					} else if (mov == 2) { // IZQUIERDA
+						Position p = new Position(marine.getPosition().getX() - 32, marine.getPosition().getY());
+						if(p.isValid()){
+							marine.move(p);
+							System.out.println("IZQUIERDA - "+ marine.getPosition().getX() / 32 + " "+ marine.getPosition().getY() / 32);
+						}
+					} else if (mov == 3) { // ARRIBA
+						Position p = new Position(marine.getPosition().getX(),marine.getPosition().getY() - 32);
+						if(p.isValid()){
+							marine.move(p);
+							System.out.println("ARRIBA - "+ marine.getPosition().getX() / 32 + " "+ marine.getPosition().getY() / 32);
+						}
+					}
+
+					if (marine.isStuck())
+						System.out.println("STUCK");
+				//}
+			}
+		});
+
+		mirror.startGame();
+
+	}
+
+	public static void main(String... args) {
+		new TestBot1().run();
+	}
 
 }

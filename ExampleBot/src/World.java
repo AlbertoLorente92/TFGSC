@@ -23,4 +23,6 @@ public interface World {
 	public void reset();
 	
 	public int lastAction();
+	
+	public int lastState();
 }

@@ -24,7 +24,7 @@ public class QTable {
 		System.out.println("TABLA");
 		for (int i=0; i<table.length; i++) {
 			for (int j=0; j<table[i].length; j++) {
-				System.out.print(table[i][j]);
+				System.out.print(table[i][j] + " ");
 			}
 			System.out.println();
 		}
@@ -44,7 +44,10 @@ public class QTable {
 		
 		if(n >= 0 && n < table.length){
 			for(int i = 0; i < table[n].length; i++){
-				s = s.concat(" ").concat(Double.toString(table[n][i]));
+				if(i!=0)
+					s.concat(" ");
+				
+				s = s.concat(Double.toString(table[n][i]));
 			}
 		}
 		

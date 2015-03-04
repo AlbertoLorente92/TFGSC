@@ -8,10 +8,21 @@ public class QLearner {
 	
 	private World world;
 	private QTable qTable;
+	private boolean comienzo;
+	private boolean sem;
 	
 	public QLearner(World world) {
 		this.world = world;
 		qTable = new QTable(world.numStates(), world.numActions());
+		comienzo = true;
+		sem = false;
+	}
+	
+	public QLearner(World world,QTable table) {
+		this.world = world;
+		this.qTable = table;
+		comienzo = true;
+		sem = false;
 	}
 	
 	public void reset() {
@@ -46,27 +57,24 @@ public class QLearner {
 	
 	public int move(){
 		int state = world.state();
-		
+
 		// Choose action
 		int action = getAction(state);
-
+	
 		// Execute action
 		double reward = world.execute(action);
 		int newState = world.state();
-
+	
 		// Update Q-Table
 		double newValue = (1-ALPHA) * qTable.get(state, action) + ALPHA * (reward + GAMMA * qTable.bestReward(newState));
 		newValue = Math.max(0, newValue);
-		qTable.set(state, action, newValue);
-
-		// Update state
-		state = newState;	
+		qTable.set(state, action, newValue);	
 		
-		return action;
+		return action;		
 	}
 	
 	public void endOfGame(){
-		qTable.set(world.state(), world.lastAction(), 1);
+		qTable.set(world.lastState(), world.lastAction(), 100);
 	}
 	
 	public int run(int maxSteps) {

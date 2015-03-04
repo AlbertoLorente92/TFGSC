@@ -9,9 +9,8 @@ public class Escenario implements World{
 
 	private int SC_WIDTH;
 	private int SC_HEIGHT;
-	private Game game;
-	private Unit unit;
-	private int lastAc;
+
+	private int lastAc,lastSt;
 	
 	// player position
 	private int posX, posY;
@@ -28,13 +27,14 @@ public class Escenario implements World{
 	
 	//constructor
 	public Escenario(Game g,Unit u){
-		this.game =  g;
-		SC_HEIGHT = game.mapHeight();
-		SC_WIDTH = game.mapWidth();
-		this.unit = u;
-		posX = (int) unit.getPosition().getX() / 32;
-		posY = (int) unit.getPosition().getY() / 32;
+		SC_HEIGHT = g.mapHeight();
+		SC_WIDTH = g.mapWidth();
+
+		posX = (int) u.getPosition().getX() / 32;
+		posY = (int) u.getPosition().getY() / 32;
+		
 		lastAc = -1;
+		lastSt = posY * SC_WIDTH + posX;
 	}
 	
 	
@@ -51,12 +51,22 @@ public class Escenario implements World{
 	}
 
 	@Override
+	
+	/**
+	 * accion = [0,3]
+	 * 0 = Derecha
+	 * 1 = Abajo
+	 * 2 = Izquierda
+	 * 3 = Arriba
+	 */
 	public double execute(int action) {
-		lastAc = action;
 		int[] dx = { 1, 0, -1, 0 };
 		int[] dy = { 0, 1, 0, -1 };
 		double reward = 0;
-
+		
+		lastAc = action;
+		lastSt = posY * SC_WIDTH + posX;
+		
 		posX += dx[action];
 		posY += dy[action];
 		
@@ -71,6 +81,10 @@ public class Escenario implements World{
 	
 	public int lastAction(){
 		return lastAc;
+	}
+	
+	public int lastState(){
+		return lastSt;
 	}
 	
 	@Override
@@ -91,66 +105,4 @@ public class Escenario implements World{
 		
 	}
 
-	/*static boolean leerMapa(String mapa) {
-	      File archivo = null;
-	      FileReader fr = null;
-	      BufferedReader br = null;
-	      boolean exito=true;
-	      try {
-	         // Apertura del fichero y creacion de BufferedReader para poder
-	         // hacer una lectura comoda (disponer del metodo readLine()).
-	         archivo = new File ("mapa.txt");
-	         fr = new FileReader (archivo);
-	         br = new BufferedReader(fr);
-	 
-	         // Lectura del fichero
-	         String linea;
-	         //comprobacion
-	         while((linea=br.readLine())!=null)
-	            System.out.println(linea);
-	      }
-	      catch(Exception e){
-	         e.printStackTrace();
-	      }finally{
-	         // En el finally cerramos el fichero, para asegurarnos
-	         // que se cierra tanto si todo va bien como si salta 
-	         // una excepcion.
-	         try{                    
-	            if( null != fr ){   
-	               fr.close();     
-	            }                  
-	         }catch (Exception e2){ 
-	            e2.printStackTrace();
-	         }
-	      }
-		return exito;
-	}
-	
-	
-	public static boolean guardarMapa(String mapa){
-		boolean exito=true;
-	
-        FileWriter fichero = null;
-        PrintWriter pw = null;
-        try
-        {
-            fichero = new FileWriter("mapa.txt");
-            pw = new PrintWriter(fichero);
-            pw.println("falta texto ");
- 
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-           try {
-           // Nuevamente aprovechamos el finally para 
-           // asegurarnos que se cierra el fichero.
-           if (null != fichero)
-              fichero.close();
-           } catch (Exception e2) {
-              e2.printStackTrace();
-           }
-        }
- 
-		return exito;
-	}*/
 }

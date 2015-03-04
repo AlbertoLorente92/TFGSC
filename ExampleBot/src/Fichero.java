@@ -16,7 +16,7 @@ public class Fichero {
             pw = new PrintWriter(fichero);
  
             
-            pw.println(t.getTam() + " " + t.getAcc());
+            pw.println(t.getTam() + "\n" + t.getAcc());
             
             for (int i = 0; i < t.getTam(); i++){
                 pw.println(t.line(0));
@@ -36,7 +36,7 @@ public class Fichero {
         }
 	}
 	
-	/*public static QTable leeTabla(){
+	public static QTable leeTabla(){
 		FileReader fr = null;
 		QTable q = null;
 		
@@ -50,14 +50,16 @@ public class Fichero {
 	         
 	         // Lectura del fichero
 	         String linea =br.readLine();
-	         int[] x = pLinea(linea);
-	         System.out.println(linea);
-	         q = new QTable(x[0],x[1]);
-	         int av = 0;
+	         int H = Integer.parseInt(linea);
+	         linea = br.readLine();
+	         int W = Integer.parseInt(linea);
+	         q = new QTable(H,W);
 	         while((linea=br.readLine())!=null){
 	        	 double d[] = parse(linea);
-	        	 for(int i = 0; i < x[1]; i++){
-	            	q.se
+	        	 for(int i = 0; i < H; i++){
+	            	for(int j = 0; j < d.length; j++){
+	            		q.set(i, j, d[j]);
+	            	}
 	            }
 	         }
 	      }
@@ -75,7 +77,9 @@ public class Fichero {
 	            e2.printStackTrace();
 	         }
 	      }
-	}*/
+		
+		return q;
+	}
 	
 	private static int[] pLinea(String s){
 		StringTokenizer st = new StringTokenizer(s," ");

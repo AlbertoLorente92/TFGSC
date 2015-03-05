@@ -18,9 +18,20 @@ public class Fichero {
             
             pw.println(t.getTam() + "\n" + t.getAcc());
             
-            for (int i = 0; i < t.getTam(); i++){
-                pw.println(t.line(0));
+            for(int i = 0; i < t.getTam();i++){
+            	for(int j = 0; j < t.getAcc(); j++){
+            		pw.print(t.get(i, j));
+            		if(j!=t.getAcc()-1){
+            			pw.print(" ");
+            		}
+            	}
+            	pw.println();
             }
+            
+            
+            /*for (int i = 0; i < t.getTam(); i++){
+                pw.println(t.line(0));
+            }*/
  
         } catch (Exception e) {
             e.printStackTrace();

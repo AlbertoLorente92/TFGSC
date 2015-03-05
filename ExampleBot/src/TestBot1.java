@@ -66,7 +66,7 @@ public class TestBot1 {
 
 				q = new QLearner(w);
 
-				game.setLocalSpeed(0);
+				//game.setLocalSpeed(0);
 				// game.setGUI(false);
 				game.enableFlag(0); // This command allows you to manually
 									// control the units during the game.
@@ -91,7 +91,6 @@ public class TestBot1 {
 			public void onFrame() {
 				game.setTextSize(10);
 				if(!marine.isMoving()){
-				//if (w.state() != w.lastState()) {
 
 					int mov = q.move();
 					if (mov == 0) { // DERECHA

@@ -45,7 +45,7 @@ public class QTable {
 		if(n >= 0 && n < table.length){
 			for(int i = 0; i < table[n].length; i++){
 				if(i!=0)
-					s.concat(" ");
+					s = s.concat(" ");
 				
 				s = s.concat(Double.toString(table[n][i]));
 			}

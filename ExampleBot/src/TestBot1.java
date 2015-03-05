@@ -90,39 +90,56 @@ public class TestBot1 {
 			@Override
 			public void onFrame() {
 				game.setTextSize(10);
-
+				if(!marine.isMoving()){
 				//if (w.state() != w.lastState()) {
 
 					int mov = q.move();
 					if (mov == 0) { // DERECHA
-						Position p = new Position(marine.getPosition().getX() + 32, marine.getPosition().getY());
+						int x = marine.getPosition().getX() + 32;
+						if(x>game.mapWidth()){
+							x = game.mapWidth();
+						}
+						Position p = new Position(x, marine.getPosition().getY());
 						if(p.isValid()){
 							marine.move(p);
 							System.out.println("DERECHA - "+ marine.getPosition().getX() / 32 + " "+ marine.getPosition().getY() / 32);
 						}
 					} else if (mov == 1) { // ABAJO
-						Position p = new Position(marine.getPosition().getX(),marine.getPosition().getY() + 32);
-						if(p.isValid()){
-							marine.move(p);
-							System.out.println("ABAJO - "+ marine.getPosition().getX() / 32 + " "+ marine.getPosition().getY() / 32);
+						int y = marine.getPosition().getY() + 32;
+						if(y>game.mapHeight()){
+							y = game.mapHeight();
 						}
+						
+						Position p = new Position(marine.getPosition().getX(),y);
+						
+						marine.move(p);
+						System.out.println("ABAJO - "+ marine.getPosition().getX() / 32 + " "+ marine.getPosition().getY() / 32);
+					
 					} else if (mov == 2) { // IZQUIERDA
-						Position p = new Position(marine.getPosition().getX() - 32, marine.getPosition().getY());
-						if(p.isValid()){
-							marine.move(p);
-							System.out.println("IZQUIERDA - "+ marine.getPosition().getX() / 32 + " "+ marine.getPosition().getY() / 32);
+						int x = marine.getPosition().getX() - 32;
+						if(x<0){
+							x = 0;
 						}
+						Position p = new Position(x, marine.getPosition().getY());
+					
+						marine.move(p);
+						System.out.println("IZQUIERDA - "+ marine.getPosition().getX() / 32 + " "+ marine.getPosition().getY() / 32);
+					
 					} else if (mov == 3) { // ARRIBA
-						Position p = new Position(marine.getPosition().getX(),marine.getPosition().getY() - 32);
-						if(p.isValid()){
-							marine.move(p);
-							System.out.println("ARRIBA - "+ marine.getPosition().getX() / 32 + " "+ marine.getPosition().getY() / 32);
+						int y = marine.getPosition().getY() - 32;
+						if(y<0){
+							y = 0;
 						}
+						Position p = new Position(marine.getPosition().getX(),y);
+						
+						marine.move(p);
+						System.out.println("ARRIBA - "+ marine.getPosition().getX() / 32 + " "+ marine.getPosition().getY() / 32);
+					
 					}
 
 					if (marine.isStuck())
 						System.out.println("STUCK");
-				//}
+				}
 			}
 		});
 

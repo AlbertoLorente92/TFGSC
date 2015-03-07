@@ -19,13 +19,11 @@ public class TestBot1 {
 	private Unit marine;
 
 	private Game game;
-	private int cont;
 	private Player self;
 
-	private boolean fin;
 	private QLearner q;
 	private World w;
-
+	private Position marineP;
 	private DateFormat dateFormat;
 	private Date date;
 
@@ -41,7 +39,6 @@ public class TestBot1 {
 			public void onStart() {
 				dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 				date = new Date();
-				cont = 0;
 				game = mirror.getGame();
 				self = game.self();
 				// Use BWTA to analyze map
@@ -56,8 +53,6 @@ public class TestBot1 {
 				System.out.println("Map data ready");
 
 				System.out.println(game.mapHeight() + " " + game.mapWidth());
-				System.out.println(marine.getPosition().getX() / 32 + " "
-						+ marine.getPosition().getY() / 32);
 
 				w = new Escenario(game, marine);
 
@@ -66,7 +61,7 @@ public class TestBot1 {
 
 				q = new QLearner(w);
 
-				//game.setLocalSpeed(0);
+				game.setLocalSpeed(100);
 				// game.setGUI(false);
 				game.enableFlag(0); // This command allows you to manually
 									// control the units during the game.
@@ -83,56 +78,83 @@ public class TestBot1 {
 				for (Unit myUnit : self.getUnits()) {
 					if (myUnit.getType() == UnitType.Terran_Marine) {
 						marine = myUnit;
+						marineP = marine.getPosition();
 					}
 				}
+			}
+			
+			private boolean itsInside(int top,int bot,int right,int left,Position p){
+				int x = p.getX();
+				int y = p.getY();
+				
+				return (left<=x) && (x<=right) && (bot>=y) && (y>=top);				
+			}
+			
+			private Position dontCollision(Position p){				
+				for (Unit myUnit : game.getAllUnits()) {
+					if (myUnit.getType() != UnitType.Terran_Marine && itsInside(myUnit.getTop(),myUnit.getBottom(),myUnit.getRight(),myUnit.getLeft(),p)) {
+						System.out.println("Movimiento incorrecto");
+						return new Position(marine.getPosition().getX(),marine.getPosition().getY());
+					}
+				}
+				return p;
+			}
+			
+			private Position makeItValid(Position p){
+				int x = p.getX();
+				int y = p.getY();
+				
+				//Is x correct?
+				if(x>(game.mapWidth()*32)){
+					x = game.mapWidth()*32;
+				}else if(x<0){
+					x = 0;
+				}
+				
+				//Is y correct?
+				if(y>(game.mapHeight()*32)){
+					y = game.mapHeight()*32;
+				}else if(y<0){
+					y = 0;
+				}
+				
+				return dontCollision(new Position(x,y));
 			}
 
 			@Override
 			public void onFrame() {
 				game.setTextSize(10);
 				if(!marine.isMoving()){
-
+					marineP = marine.getPosition();
+					System.out.println(marine.getPosition().getX() / 32 + " - " + marine.getPosition().getY() / 32);
 					int mov = q.move();
 					if (mov == 0) { // DERECHA
-						int x = marine.getPosition().getX() + 32;
-						if(x>game.mapWidth()){
-							x = game.mapWidth();
-						}
-						Position p = new Position(x, marine.getPosition().getY());
-						if(p.isValid()){
-							marine.move(p);
-							System.out.println("DERECHA - "+ marine.getPosition().getX() / 32 + " "+ marine.getPosition().getY() / 32);
-						}
-					} else if (mov == 1) { // ABAJO
-						int y = marine.getPosition().getY() + 32;
-						if(y>game.mapHeight()){
-							y = game.mapHeight();
-						}
-						
-						Position p = new Position(marine.getPosition().getX(),y);
+						System.out.println("DERECHA");
+						Position p = makeItValid(new Position(marine.getPosition().getX() + 32, marine.getPosition().getY()));
 						
 						marine.move(p);
-						System.out.println("ABAJO - "+ marine.getPosition().getX() / 32 + " "+ marine.getPosition().getY() / 32);
+						
+					
+					} else if (mov == 1) { // ABAJO	
+						System.out.println("ABAJO");
+						Position p = makeItValid(new Position(marine.getPosition().getX(),marine.getPosition().getY() + 32));
+						
+						marine.move(p);
+						
 					
 					} else if (mov == 2) { // IZQUIERDA
-						int x = marine.getPosition().getX() - 32;
-						if(x<0){
-							x = 0;
-						}
-						Position p = new Position(x, marine.getPosition().getY());
+						System.out.println("IZQUIERDA");
+						Position p = makeItValid(new Position(marine.getPosition().getX() - 32, marine.getPosition().getY()));
 					
 						marine.move(p);
-						System.out.println("IZQUIERDA - "+ marine.getPosition().getX() / 32 + " "+ marine.getPosition().getY() / 32);
+						
 					
 					} else if (mov == 3) { // ARRIBA
-						int y = marine.getPosition().getY() - 32;
-						if(y<0){
-							y = 0;
-						}
-						Position p = new Position(marine.getPosition().getX(),y);
+						System.out.println("ARRIBA");
+						Position p = makeItValid(new Position(marine.getPosition().getX(),marine.getPosition().getY() - 32));
 						
 						marine.move(p);
-						System.out.println("ARRIBA - "+ marine.getPosition().getX() / 32 + " "+ marine.getPosition().getY() / 32);
+						
 					
 					}
 

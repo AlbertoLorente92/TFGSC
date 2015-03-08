@@ -1,5 +1,6 @@
 
 import java.io.*;
+import java.util.List;
 
 import bwapi.Game;
 import bwapi.Position;
@@ -9,29 +10,52 @@ public class Escenario implements World{
 
 	private int SC_WIDTH;
 	private int SC_HEIGHT;
-
+	private List<Unit> l;
 	private int lastAc,lastSt;
 	
 	// player position
 	private int posX, posY;
 
-	private boolean valid(int x, int y) {
-		Position P = new Position(x,y);
+	private boolean itsInside(int top,int bot,int right,int left){
+		int x = posX*32;
+		int y = posY*32;
 		
-		if(!P.isValid())
+		return (left<=x) && (x<=right) && (bot>=y) && (y>=top);				
+	}
+	
+	private boolean valid(int x, int y) {		
+		if((0 <= x) && (x < SC_WIDTH) && (0 <= y) && (y < SC_HEIGHT)){
+			boolean dontCol = true;
+			int i = 0;
+			Unit m;
+			
+			while(dontCol && i < l.size()){
+				m = l.get(i);
+				if(itsInside(m.getTop(),m.getBottom(),m.getRight(),m.getLeft())){
+					dontCol = false;
+				}
+				i++;
+			}
+			
+			return dontCol;
+		}else{
 			return false;
-		
-		return (0 <= x) && (x < SC_WIDTH) &&
-				(0 <= y) && (y < SC_HEIGHT);
+		}
 	}
 	
 	//constructor
 	public Escenario(Game g,Unit u){
 		SC_HEIGHT = g.mapHeight();
 		SC_WIDTH = g.mapWidth();
-
+		l = g.getAllUnits();
 		posX = (int) u.getPosition().getX() / 32;
 		posY = (int) u.getPosition().getY() / 32;
+		
+		for(Unit m: g.getAllUnits()){
+			if(m!=u){
+				l.add(m);
+			}
+		}
 		
 		lastAc = -1;
 		lastSt = posY * SC_WIDTH + posX;
@@ -75,7 +99,7 @@ public class Escenario implements World{
 			posY -= dy[action];
 			reward = -1;
 		}
-
+		
 		return reward;
 	}
 	

@@ -8,21 +8,15 @@ public class QLearner {
 	
 	private World world;
 	private QTable qTable;
-	private boolean comienzo;
-	private boolean sem;
 	
 	public QLearner(World world) {
 		this.world = world;
 		qTable = new QTable(world.numStates(), world.numActions());
-		comienzo = true;
-		sem = false;
 	}
 	
 	public QLearner(World world,QTable table) {
 		this.world = world;
 		this.qTable = table;
-		comienzo = true;
-		sem = false;
 	}
 	
 	public void reset() {
@@ -55,7 +49,7 @@ public class QLearner {
 		return -1;
 	}
 	
-	public int move(){
+	public Pair move(){
 		int state = world.state();
 
 		// Choose action
@@ -70,7 +64,10 @@ public class QLearner {
 		newValue = Math.max(0, newValue);
 		qTable.set(state, action, newValue);	
 		
-		return action;		
+		if(reward==-1)
+			return new Pair(action,false);
+		else 
+			return new Pair(action,true);
 	}
 	
 	public void endOfGame(){

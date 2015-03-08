@@ -20,7 +20,7 @@ public class TestBot1 {
 
 	private Game game;
 	private Player self;
-
+	private int numeroDeIntentos = 0;
 	private QLearner q;
 	private World w;
 	private Position marineP;
@@ -56,12 +56,12 @@ public class TestBot1 {
 
 				w = new Escenario(game, marine);
 
-				// QTable qT = Fichero.leeTabla();
-				// q = new QLearner(w,qT);
+				QTable qT = Fichero.leeTabla();
+				q = new QLearner(w,qT);
 
-				q = new QLearner(w);
+				//q = new QLearner(w);
 
-				game.setLocalSpeed(100);
+				game.setLocalSpeed(0);
 				// game.setGUI(false);
 				game.enableFlag(0); // This command allows you to manually
 									// control the units during the game.
@@ -72,6 +72,11 @@ public class TestBot1 {
 				System.out.println("END");
 				q.endOfGame();
 				Fichero.escribirTabla(q.qTable());
+				
+				if(numeroDeIntentos<100){
+					numeroDeIntentos++;
+					game.restartGame();
+				}
 			}
 
 			private void getMarine() {
@@ -93,7 +98,7 @@ public class TestBot1 {
 			private Position dontCollision(Position p){				
 				for (Unit myUnit : game.getAllUnits()) {
 					if (myUnit.getType() != UnitType.Terran_Marine && itsInside(myUnit.getTop(),myUnit.getBottom(),myUnit.getRight(),myUnit.getLeft(),p)) {
-						System.out.println("Movimiento incorrecto");
+						//System.out.println("Movimiento incorrecto");
 						return new Position(marine.getPosition().getX(),marine.getPosition().getY());
 					}
 				}
@@ -127,35 +132,43 @@ public class TestBot1 {
 				if(!marine.isMoving()){
 					marineP = marine.getPosition();
 					System.out.println(marine.getPosition().getX() / 32 + " - " + marine.getPosition().getY() / 32);
-					int mov = q.move();
-					if (mov == 0) { // DERECHA
+					Pair mov = q.move();
+					if (mov.getDireccion() == 0) { // DERECHA
 						System.out.println("DERECHA");
-						Position p = makeItValid(new Position(marine.getPosition().getX() + 32, marine.getPosition().getY()));
-						
-						marine.move(p);
-						
+						//Position p = makeItValid(new Position(marine.getPosition().getX() + 32, marine.getPosition().getY()));
+						if(mov.getCanMove()){						
+							marine.move(new Position(marine.getPosition().getX() + 32, marine.getPosition().getY()));
+						}else{
+							System.out.println("Movimiento incorrecto");
+						}
 					
-					} else if (mov == 1) { // ABAJO	
+					} else if (mov.getDireccion() == 1) { // ABAJO	
 						System.out.println("ABAJO");
-						Position p = makeItValid(new Position(marine.getPosition().getX(),marine.getPosition().getY() + 32));
-						
-						marine.move(p);
-						
+						//Position p = makeItValid(new Position(marine.getPosition().getX(),marine.getPosition().getY() + 32));
+						if(mov.getCanMove()){						
+							marine.move(new Position(marine.getPosition().getX(),marine.getPosition().getY() + 32));
+						}else{
+							System.out.println("Movimiento incorrecto");
+						}
 					
-					} else if (mov == 2) { // IZQUIERDA
+					} else if (mov.getDireccion() == 2) { // IZQUIERDA
 						System.out.println("IZQUIERDA");
-						Position p = makeItValid(new Position(marine.getPosition().getX() - 32, marine.getPosition().getY()));
+						//Position p = makeItValid(new Position(marine.getPosition().getX() - 32, marine.getPosition().getY()));
+						if(mov.getCanMove()){						
+							marine.move(new Position(marine.getPosition().getX() - 32,marine.getPosition().getY()));
+						}else{
+							System.out.println("Movimiento incorrecto");
+						}
 					
-						marine.move(p);
-						
-					
-					} else if (mov == 3) { // ARRIBA
+					} else if (mov.getDireccion() == 3) { // ARRIBA
 						System.out.println("ARRIBA");
-						Position p = makeItValid(new Position(marine.getPosition().getX(),marine.getPosition().getY() - 32));
+						//Position p = makeItValid(new Position(marine.getPosition().getX(),marine.getPosition().getY() - 32));
+						if(mov.getCanMove()){						
+							marine.move(new Position(marine.getPosition().getX(),marine.getPosition().getY() - 32));
+						}else{
+							System.out.println("Movimiento incorrecto");
+						}
 						
-						marine.move(p);
-						
-					
 					}
 
 					if (marine.isStuck())

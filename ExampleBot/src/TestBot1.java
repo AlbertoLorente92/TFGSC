@@ -21,6 +21,7 @@ public class TestBot1 {
 	private Game game;
 	private Player self;
 	private int numeroDeIntentos = 0;
+	private int numeroPasos;
 	private QLearner q;
 	private World w;
 	private Position marineP;
@@ -55,7 +56,7 @@ public class TestBot1 {
 				System.out.println(game.mapHeight() + " " + game.mapWidth());
 
 				w = new Escenario(game, marine);
-
+				numeroPasos = 0;
 				QTable qT = Fichero.leeTabla();
 				q = new QLearner(w,qT);
 
@@ -72,10 +73,10 @@ public class TestBot1 {
 				System.out.println("END");
 				q.endOfGame();
 				Fichero.escribirTabla(q.qTable());
-				
+				System.out.println("PASOS DADOS - " + numeroPasos);
 				if(numeroDeIntentos<100){
 					numeroDeIntentos++;
-					game.restartGame();
+					game.restartGame();				
 				}
 			}
 
@@ -130,6 +131,7 @@ public class TestBot1 {
 			public void onFrame() {
 				game.setTextSize(10);
 				if(!marine.isMoving()){
+					numeroPasos++;
 					marineP = marine.getPosition();
 					System.out.println(marine.getPosition().getX() / 32 + " - " + marine.getPosition().getY() / 32);
 					Pair mov = q.move();

@@ -12,7 +12,7 @@ public class Fichero {
         PrintWriter pw = null;
         try
         {
-            fichero = new FileWriter("C:\\Users\\Alberto\\Desktop\\prueba.txt");
+            fichero = new FileWriter("C:\\Users\\Juan\\Desktop\\prueba.txt");
             pw = new PrintWriter(fichero);
  
             
@@ -54,7 +54,7 @@ public class Fichero {
 		try {
 	         // Apertura del fichero y creacion de BufferedReader para poder
 	         // hacer una lectura comoda (disponer del metodo readLine()).
-	         File archivo = new File ("C:\\Users\\Alberto\\Desktop\\prueba.txt");
+	         File archivo = new File ("C:\\Users\\Juan\\Desktop\\prueba.txt");
 	         fr = new FileReader (archivo);
 	         BufferedReader br = new BufferedReader(fr);
 	         

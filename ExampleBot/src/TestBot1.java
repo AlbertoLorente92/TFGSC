@@ -73,7 +73,7 @@ public class TestBot1 {
 				System.out.println("END");
 				q.endOfGame();
 				Fichero.escribirTabla(q.qTable());
-				System.out.println("PASOS DADOS - " + numeroPasos);
+				System.out.println("PASOS DADOS - " + numeroPasos + "numero intenteos " + numeroDeIntentos);
 				if(numeroDeIntentos<100){
 					numeroDeIntentos++;
 					game.restartGame();				
@@ -151,6 +151,7 @@ public class TestBot1 {
 							marine.move(new Position(marine.getPosition().getX(),marine.getPosition().getY() + 32));
 						}else{
 							System.out.println("Movimiento incorrecto");
+							//q.qTable().set(estado, 1, 0);
 						}
 					
 					} else if (mov.getDireccion() == 2) { // IZQUIERDA

@@ -73,7 +73,7 @@ public class TestBot1 {
 				System.out.println("END");
 				q.endOfGame();
 				Fichero.escribirTabla(q.qTable());
-				System.out.println("PASOS DADOS - " + numeroPasos + "numero intenteos " + numeroDeIntentos);
+				System.out.println("PASOS DADOS - " + numeroPasos + "\nnumero intenteos : " + numeroDeIntentos);
 				if(numeroDeIntentos<100){
 					numeroDeIntentos++;
 					game.restartGame();				
@@ -124,7 +124,17 @@ public class TestBot1 {
 					y = 0;
 				}
 				
-				return dontCollision(new Position(x,y));
+				if(game.isWalkable(x, y)){	
+					System.out.println("is walkale!");
+					
+					return dontCollision(new Position(x,y));
+					
+				}
+				else{
+					System.err.println("no es  walkale!");
+					return marineP;
+				}
+					
 			}
 
 			@Override
@@ -137,18 +147,20 @@ public class TestBot1 {
 					Pair mov = q.move();
 					if (mov.getDireccion() == 0) { // DERECHA
 						System.out.println("DERECHA");
-						//Position p = makeItValid(new Position(marine.getPosition().getX() + 32, marine.getPosition().getY()));
+						Position p = makeItValid(new Position(marine.getPosition().getX() + 32, marine.getPosition().getY()));
 						if(mov.getCanMove()){						
-							marine.move(new Position(marine.getPosition().getX() + 32, marine.getPosition().getY()));
+							//marine.move(new Position(marine.getPosition().getX() + 32, marine.getPosition().getY()));
+							marine.move(p);
 						}else{
 							System.out.println("Movimiento incorrecto");
 						}
 					
 					} else if (mov.getDireccion() == 1) { // ABAJO	
 						System.out.println("ABAJO");
-						//Position p = makeItValid(new Position(marine.getPosition().getX(),marine.getPosition().getY() + 32));
+						Position p = makeItValid(new Position(marine.getPosition().getX(),marine.getPosition().getY() + 32));
 						if(mov.getCanMove()){						
-							marine.move(new Position(marine.getPosition().getX(),marine.getPosition().getY() + 32));
+							//marine.move(new Position(marine.getPosition().getX(),marine.getPosition().getY() + 32));
+							marine.move(p);
 						}else{
 							System.out.println("Movimiento incorrecto");
 							//q.qTable().set(estado, 1, 0);
@@ -156,18 +168,20 @@ public class TestBot1 {
 					
 					} else if (mov.getDireccion() == 2) { // IZQUIERDA
 						System.out.println("IZQUIERDA");
-						//Position p = makeItValid(new Position(marine.getPosition().getX() - 32, marine.getPosition().getY()));
+						Position p = makeItValid(new Position(marine.getPosition().getX() - 32, marine.getPosition().getY()));
 						if(mov.getCanMove()){						
-							marine.move(new Position(marine.getPosition().getX() - 32,marine.getPosition().getY()));
+							//marine.move(new Position(marine.getPosition().getX() - 32,marine.getPosition().getY()));
+							marine.move(p);
 						}else{
 							System.out.println("Movimiento incorrecto");
 						}
 					
 					} else if (mov.getDireccion() == 3) { // ARRIBA
 						System.out.println("ARRIBA");
-						//Position p = makeItValid(new Position(marine.getPosition().getX(),marine.getPosition().getY() - 32));
+						Position p = makeItValid(new Position(marine.getPosition().getX(),marine.getPosition().getY() - 32));
 						if(mov.getCanMove()){						
-							marine.move(new Position(marine.getPosition().getX(),marine.getPosition().getY() - 32));
+							//marine.move(new Position(marine.getPosition().getX(),marine.getPosition().getY() - 32));
+							marine.move(p);
 						}else{
 							System.out.println("Movimiento incorrecto");
 						}
